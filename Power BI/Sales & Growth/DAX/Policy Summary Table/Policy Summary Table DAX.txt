@@ -1,0 +1,41 @@
+Measure:-
+
+PolicySummaryTablenew =
+UNION(
+    SUMMARIZE(
+        'Transaction Sales & Growth',
+        "Transaction Type", "NB",
+        "CY Policy Count", CALCULATE(SUM('Transaction Sales & Growth'[NBWrittenPolicyCnt]),FILTER('Dim Date',YEAR('Dim Date'[FullDate])=Year(TODAY()))),
+        "CY GWP",CALCULATE(SUM('Transaction Sales & Growth'[NBGWPRptAmt]),FILTER('Dim Date',YEAR('Dim Date'[FullDate])=Year(TODAY())))
+        ,"PY Policy Count", CALCULATE(SUM('Transaction Sales & Growth'[NBWrittenPolicyCnt]),FILTER('Dim Date',YEAR('Dim Date'[FullDate])=Year(TODAY())-1))
+        ,"PY GWP",CALCULATE(SUM('Transaction Sales & Growth'[NBGWPRptAmt]),FILTER('Dim Date',YEAR('Dim Date'[FullDate])=Year(TODAY())-1))
+    ),
+    Summarize(
+        'Transaction Sales & Growth',
+         "Transaction Type", "RNL",
+        "CY Policy Count", CALCULATE(SUM('Transaction Sales & Growth'[RN Written Policy Count]),FILTER('Dim Date',YEAR('Dim Date'[FullDate])=Year(TODAY()))),
+        "CY GWP",CALCULATE(sum('Transaction Sales & Growth'[RenewalGWPRptAmt]),FILTER('Dim Date',YEAR('Dim Date'[FullDate])=Year(TODAY())))
+        ,"PY Policy Count", CALCULATE(SUM('Transaction Sales & Growth'[RN Written Policy Count]),FILTER('Dim Date',YEAR('Dim Date'[FullDate])=Year(TODAY())-1))
+       ,"PY GWP",CALCULATE(sum('Transaction Sales & Growth'[RenewalGWPRptAmt]),FILTER('Dim Date',YEAR('Dim Date'[FullDate])=Year(TODAY())-1))
+ 
+ 
+    ),
+    SUMMARIZE(
+        'Transaction Sales & Growth',
+        "Transaction Type", "MTA",
+        "CY Policy Count", Blank(),
+        "CY GWP",CALCULATE(SUM('Transaction Sales & Growth'[NBMidTermAdjRptAmt])+SUM('Transaction Sales & Growth'[Renewal MidTermAdjRptAmt]),FILTER('Dim Date',YEAR('Dim Date'[FullDate])=Year(TODAY())))
+        ,"PY Policy Count", Blank()
+        ,"PY GWP",CALCULATE(SUM('Transaction Sales & Growth'[NBMidTermAdjRptAmt])+SUM('Transaction Sales & Growth'[Renewal MidTermAdjRptAmt]),FILTER('Dim Date',YEAR('Dim Date'[FullDate])=Year(TODAY())-1))
+ 
+    ),
+    SUMMARIZE(
+        'Transaction Sales & Growth',
+        "Transaction Type", "MTC",
+        "CY Policy Count", CALCULATE(SUM('Transaction Sales & Growth'[NBMidTermCancCnt])+SUM('Transaction Sales & Growth'[RNMidTermCancCnt]),FILTER('Dim Date',YEAR('Dim Date'[FullDate])=Year(TODAY()))),
+        "CY GWP",CALCULATE(SUM('Transaction Sales & Growth'[NBMidTermCancRptAmt])+SUM('Transaction Sales & Growth'[RenewalMidTermCancelRptAmt]),FILTER('Dim Date',YEAR('Dim Date'[FullDate])=Year(TODAY())))
+        ,"PY Policy Count", CALCULATE(SUM('Transaction Sales & Growth'[NBMidTermCancCnt])+SUM('Transaction Sales & Growth'[RNMidTermCancCnt]),FILTER('Dim Date',YEAR('Dim Date'[FullDate])=Year(TODAY())-1))
+        ,"PY GWP",CALCULATE(SUM('Transaction Sales & Growth'[NBMidTermCancRptAmt])+SUM('Transaction Sales & Growth'[RenewalMidTermCancelRptAmt]),FILTER('Dim Date',YEAR('Dim Date'[FullDate])=Year(TODAY())-1))
+ 
+    )
+)

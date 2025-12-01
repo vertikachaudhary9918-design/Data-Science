@@ -1,0 +1,40 @@
+This DAX code is creating a calculated table called PolicySummaryTablenew by combining multiple summarized datasets using the UNION function. Here's what it does step by step:
+
+1. Purpose
+It builds a summary table that shows policy counts and GWP (Gross Written Premium) for different transaction types (NB, RNL, MTA, MTC) for Current Year (CY) and Previous Year (PY).
+
+2. Transaction Types
+
+NB = New Business
+RNL = Renewal
+MTA = Mid-Term Adjustment
+MTC = Mid-Term Cancellation
+
+
+3. Structure
+For each transaction type, it uses SUMMARIZE to create a row with:
+
+Transaction Type (NB, RNL, MTA, MTC)
+CY Policy Count (Current Year)
+CY GWP (Current Year)
+PY Policy Count (Previous Year)
+PY GWP (Previous Year)
+
+
+4. Logic
+
+For NB and RNL:
+
+Calculates policy count and GWP for CY and PY using CALCULATE + FILTER on Dim Date for the respective year.
+
+
+For MTA:
+
+Policy count is Blank() (not applicable).
+GWP is sum of NB and Renewal mid-term adjustment amounts for CY and PY.
+
+
+For MTC:
+
+Policy count is sum of NB and Renewal mid-term cancellation counts for CY and PY.
+GWP is sum of NB and Renewal mid-term cancellation amounts for CY and PY.

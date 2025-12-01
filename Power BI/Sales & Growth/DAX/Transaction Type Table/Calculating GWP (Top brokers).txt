@@ -1,0 +1,34 @@
+Combined GWP (Top brokers) =
+VAR N = SELECTEDVALUE('Top Records'[Top Records], 10)
+VAR VisibleBrokers = ALLSELECTED('Dim Broker'[BrokerMasterName])
+VAR TopBrokers =
+   SELECTCOLUMNS(
+       TOPN(N, ADDCOLUMNS(VisibleBrokers, "__rank", [Broker Rank]), [__rank], ASC),
+       "BrokerMasterName", 'Dim Broker'[BrokerMasterName]
+   )
+VAR Tx = SELECTEDVALUE(PolicySummaryTable[Transaction Type])
+RETURN
+SWITCH(
+   TRUE(),
+   Tx = "NB",
+       CALCULATE(
+           [NB GWP Amount],
+           KEEPFILTERS(TREATAS(TopBrokers, 'Dim Broker'[BrokerMasterName]))
+       ),
+   Tx = "RNL",
+       CALCULATE(
+           [RN GWP Amount],
+           KEEPFILTERS(TREATAS(TopBrokers, 'Dim Broker'[BrokerMasterName]))
+       ),
+   Tx = "MTA",
+       CALCULATE(
+           [NB Midterm Adj Amount]+ [RN MidTerm Adj Amount],
+           KEEPFILTERS(TREATAS(TopBrokers, 'Dim Broker'[BrokerMasterName]))
+       ),
+   Tx = "MTC",
+       CALCULATE(
+           [NB Mid term Cancellation] + [RN Mid term Cancellation],
+           KEEPFILTERS(TREATAS(TopBrokers, 'Dim Broker'[BrokerMasterName]))
+       ),
+   BLANK()
+)

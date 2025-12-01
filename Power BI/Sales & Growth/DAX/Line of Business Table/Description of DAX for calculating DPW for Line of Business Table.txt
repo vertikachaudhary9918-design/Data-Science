@@ -1,0 +1,32 @@
+Description of DAX for calculating Direct Written Premium(DPW/GWP) for Top N Masterbrokers:
+
+Purpose
+The measure calculates the Direct Premium Written (DPW) for the Top N Brokers based on a selected metric, while dynamically adjusting for user selections like User Type and Transaction View Type.
+
+How It Works
+
+
+Determine Top N Brokers
+
+It first checks how many top records to show (from the Top Records slicer). If none is selected, it defaults to 10.
+Then it uses TOPN to pick the top N brokers based on [Selected Metric], ignoring any Line of Business filters.
+
+
+
+Create a Filter Table
+
+Extracts the broker names from the top N list into a table (TopKeys) for filtering later.
+
+
+
+Apply Conditional Logic
+
+If User Type = Standard, it uses the Transaction Sales & Growth table.
+Otherwise, it uses the Underwriter Sales & Growth table.
+Within each branch:
+
+If View = Default Transaction View, it sums Reported Amount.
+Else, it sums Local Amount.
+
+
+The calculation applies only to the Top Brokers using KEEPFILTERS(TREATAS(...)).

@@ -1,0 +1,28 @@
+Description of DAX code used to create Transaction type table from already built Policy Summary Table with the help of DAX:
+
+This DAX measure calculates the Combined GWP (Gross Written Premium) for the Top N Brokers, based on the selected transaction type. Let me break it down step by step:
+
+1. Purpose
+The measure dynamically computes GWP for the top brokers (by rank) and adjusts the calculation depending on the transaction type (NB, RNL, MTA, MTC).
+
+2. Key Components
+
+
+VAR N
+Retrieves the number of top brokers to consider (default is 10) from the slicer/table 'Top Records'[Top Records].
+
+
+VAR VisibleBrokers
+Gets all brokers currently visible in the report context using ALLSELECTED('Dim Broker'[BrokerMasterName]).
+
+
+VAR TopBrokers
+Creates a table of the top N brokers based on [Broker Rank].
+
+TOPN(N, ADDCOLUMNS(...), [__rank], ASC) picks the top N brokers by rank.
+SELECTCOLUMNS(...) extracts only the broker names for filtering.
+
+
+
+VAR Tx
+Captures the selected transaction type from PolicySummaryTable[Transaction Type].

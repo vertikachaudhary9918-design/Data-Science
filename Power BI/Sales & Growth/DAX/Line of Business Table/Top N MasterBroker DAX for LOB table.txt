@@ -1,0 +1,24 @@
+Top Brokers DPW LOB =
+VAR N = COALESCE(SELECTEDVALUE('Top Records'[Top Records]), 10)
+VAR TopBrokers =
+   TOPN(
+       N,
+       SUMMARIZE('Dim Broker', 'Dim Broker'[BrokerMasterName]),
+       CALCULATE([Selected Metric],REMOVEFILTERS('Dim Line of Business'[LineOfBusinessName])),
+       DESC
+   )
+VAR TopKeys = SELECTCOLUMNS(TopBrokers, "BrokerMasterName", 'Dim Broker'[BrokerMasterName])
+   RETURN
+   if(
+    SELECTEDVALUE('User Type'[User Type]) = "Standard",
+    if (
+        SELECTEDVALUE('Transaction View Type'[View]) = "Default Transaction View",
+        CALCULATE(sum('Transaction Sales & Growth'[GrossWrittenPremiumRptAmt]),KEEPFILTERS(TREATAS(TopKeys,'Dim Broker'[BrokerMasterName]))),
+        CALCULATE(sum('Transaction Sales & Growth'[GrossWrittenPremiumLclAmt]),KEEPFILTERS(TREATAS(TopKeys,'Dim Broker'[BrokerMasterName])))
+    ),
+    if (
+        SELECTEDVALUE('Transaction View Type'[View]) = "Default Transaction View",
+        CALCULATE(sum('Underwriter Sales & Growth'[GrossWrittenPremiumRptAmt]),KEEPFILTERS(TREATAS(TopKeys,'Dim Broker'[BrokerMasterName]))),
+        CALCULATE(sum('Underwriter Sales & Growth'[GrossWrittenPremiumLclAmt]),KEEPFILTERS(TREATAS(TopKeys,'Dim Broker'[BrokerMasterName])))
+    )
+)
