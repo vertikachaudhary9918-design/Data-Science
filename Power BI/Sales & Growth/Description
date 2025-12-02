@@ -53,7 +53,7 @@ A dedicated panel has been added for better space utilization, with a banner at 
 Data Accuracy & SQL Reconciliation:
 To ensure no compromise in data integrity, the dashboard is reconciled directly with SQL tables:
 
-Custom SQL Queries replicate the exact logic used in the dashboard tables (e.g., Transaction Type Table).
+Custom SQL Queries replicate the exact logic used in the dashboard tables (e.g., Transaction Type Table,etc).
 Sample queries for sorting by Direction Premium are stored in the Sales & Growth SQL folder as templates for reference.
 These queries demonstrate how complex logic from DAX is mirrored in SQL for validation.
 
