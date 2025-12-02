@@ -1,0 +1,68 @@
+Sales and Growth Dashboard Overview
+The Sales and Growth Dashboard is an advanced, dynamic solution designed to provide a focused view of performance and insights metrics for the top master brokers based on user selection.
+There are 2 different views Insights and performance and the user can toggle by clicking on the button.
+
+It ensures accuracy and consistency by reconciling data directly from SQL tables, using queries that mimic the exact structure of the dashboard tables.
+I have added the SQL queries for retrieving the tables for Standard view in SQL/project/Sales & Growth for the reference. 
+(Please note I cannot attach the organization's data in order to compliance with regulations like GDPR)
+
+Key Features:
+
+Top Master Brokers Selection:
+Displays the top brokers based on user-defined criteria (e.g., premium, policy count, or growth).
+Sorting options include:
+
+1. Direction Premium
+2. Written Policy Counts
+3. Growth
+
+
+
+Dynamic Filtering Across Tables:
+The dashboard doesn’t just filter the master broker table, it dynamically updates:
+
+1. Transaction Type Table (built from scratch using complex DAX measures)
+2. Line of Business Table
+3. Existing Business Data Table
+4. New Business Data Table
+5. Broker Segment
+6. Broker Type
+7. Top MasterBrokers Table
+8. KPI Cards that shows year selected and previous year same period data, along with growth rate.
+9. Total Amount (combined view of New business and Existing Business)
+
+Business performance view:
+Consists of transaction type, Line of business, KPI cards, top master brokers tables and visuals.
+
+
+Business Insights view:
+Broker segmentation, broker type,Existing Business, New Business, and Total Amount (combined view of both) are displayed in the Insights section.
+Totals represent overall performance across Top N brokers. There is deep diving of broker data further into segments and type in this view. 
+
+
+
+Advanced Sorting & Analysis:
+Users can sort by multiple metrics (premium, policy count, growth) for deeper insights.
+
+
+Dedicated Panel & Banner:
+A dedicated panel has been added for better space utilization, with a banner at the top for quick navigation and branding.
+
+
+
+Data Accuracy & SQL Reconciliation:
+To ensure no compromise in data integrity, the dashboard is reconciled directly with SQL tables:
+
+Custom SQL Queries replicate the exact logic used in the dashboard tables (e.g., Transaction Type Table).
+Sample queries for sorting by Direction Premium are stored in the Sales & Growth SQL folder as templates for reference.
+These queries demonstrate how complex logic from DAX is mirrored in SQL for validation.
+
+
+Two Distinct Views:
+
+Standard View: Based on Policy Transaction Date.
+Underwriter View: Based on Policy Written Date (when the policy was actually written).
+Differences in transaction values and types (e.g., New Business, Renewals, MTAs) are clearly reflected across these views.
+
+
+This dashboard combines advanced Power BI capabilities with robust SQL validation, ensuring both flexibility and reliability for sales performance analysis.
