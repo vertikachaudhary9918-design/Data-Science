@@ -1,0 +1,149 @@
+Sub ApartmentsPull()
+ 
+Dim Data As Worksheet:              Set Data = ThisWorkbook.Sheets("Data")
+Dim filesToProcess As Collection:   Set fielsToProcess = New Collection
+Dim Extraction As Worksheet:        Set Extraction = ThisWorkbook.Sheets("Extraction")
+Dim dloc As Variant
+ 
+Application.ScreenUpdating = False
+Application.DisplayAlerts = False
+ 
+'Get month and year from Extraction page
+mth = Extraction.Range("C5").Value
+yr = Extraction.Range("C4").Value
+ 
+ 
+'Renewals manager location
+ 
+If Month("01/" & mth & "/2024") < 5 Then
+        'dloc = "K:\Apartments\Renewal Listing\" & yr & "\" & Right("0" & Month("01/" & mth & "/2024"), 2) & ". " & mth & "\Apartments Renewal Listing - May 2026 (Part1 - May 7th).xlsm"
+    'Jan-Apr one file
+        'dloc = "K:\Apartments\Renewal Listing\" & yr & "\" & Right("0" & Month("01/" & mth & "/2024"), 2) & ". " & mth & "\Apartments Renewal Listing - " & mth & " " & yr & ".xlsm"
+    filesToProcess.Add _
+        "K:\Apartments\Renewal Listing\" & yr & "\" _
+& Right("0" & Month("01/" & mth & "/2024"), 2) & ". " & mth _
+& "\Apartments Renewal Listing - " & mth & " " & yr & ".xlsm"
+'Debug.Print dLoc
+ 
+Else
+    'May onwards part1 and part 2
+    filesToProcess.Add _
+        "K:\Apartments\Renewal Listing\" & yr & "\" & _
+        Right("0" & Month("01/" & mth & "/2024"), 2) & ". " & mth & _
+        "\Apartments Renewal Listing - May 2026 (Part1 - May 7th).xlsm"
+        'dloc = "K:\Apartments\Renewal Listing\" & yr & "\" & Right("0" & Month("01/" & mth & "/2024"), 2) & ". " & mth & "\Apartments Renewal Listing - May 2026 (Part1 - May 7th).xlsm"
+        'GoTo Line1
+        'Line2:
+    filesToProcess.Add _
+        "K:\Apartments\Renewal Listing\" & yr & "\" _
+& Right("0" & Month("01/" & mth & "/2024"), 2) & ". " & mth & _
+        "\Apartments Renewal Listing - May 2026 (Part2 - May 8th onwards).xlsm"
+    'dloc = "K:\Apartments\Renewal Listing\" & yr & "\" & Right("0" & Month("01/" & mth & "/2024"), 2) & ". " & mth & "\Apartments Renewal Listing - May 2026 (Part2 - May 8th onwards).xlsm"
+ 
+End If
+ 
+ 
+'Clear data in Data sheet for given month and year
+        'Line1:
+ 
+With Data
+.AutoFilterMode = False
+ 
+.Range("A1").CurrentRegion.AutoFilter Field:=16, _
+                                        Criteria1:=Left(mth, 3) & " " & yr, _
+                                        Operator:=xlFilterValues
+ 
+.Range("A1").CurrentRegion.AutoFilter Field:=17, _
+                                        Criteria1:="Apartments"
+ 
+lrD = .Cells(.Rows.Count, 1).End(xlUp).Row
+If lrD <> 1 Then .Range("A2:A" & lrD).SpecialCells(xlCellTypeVisible).EntireRow.Delete
+ 
+.AutoFilterMode = False
+End With
+ 
+For Each dloc In filesToProcess
+ 
+    Dim Apts As Workbook:       Set Apts = Workbooks.Open(dloc, True, True)
+    Dim Rnls As Worksheet:      Set Rnls = Apts.Sheets("D. Renewals")
+ 
+    With Rnls
+        .Unprotect ("dream_team")
+        .AutoFilterMode = False
+        nrD = Data.Cells(Data.Rows.Count, 1).End(xlUp).Row + 1
+        lrR = .Cells(.Rows.Count, 1).End(xlUp).Row
+        .Range("A2:A" & lrR).SpecialCells(xlCellTypeVisible).Copy:     Data.Range("A" & nrD).PasteSpecial (xlPasteValues)   'Policy Number
+        'Portfolio
+        'Product
+        'Sub-Product
+        'Agency Code
+        .Range("B2:B" & lrR).SpecialCells(xlCellTypeVisible).Copy:     Data.Range("F" & nrD).PasteSpecial (xlPasteValues)   'Insured
+        .Range("N2:N" & lrR).SpecialCells(xlCellTypeVisible).Copy:     Data.Range("G" & nrD).PasteSpecial (xlPasteValues)   'Renewal Date
+        'PPN
+        .Range("AC2:AC" & lrR).SpecialCells(xlCellTypeVisible).Copy:     Data.Range("I" & nrD).PasteSpecial (xlPasteValues) 'Expiring Premium
+        .Range("AQ2:AQ" & lrR).SpecialCells(xlCellTypeVisible).Copy:   Data.Range("J" & nrD).PasteSpecial (xlPasteValues)   'Premium Expiring Rates New Exposure
+        .Range("AT2:AT" & lrR).SpecialCells(xlCellTypeVisible).Copy:   Data.Range("K" & nrD).PasteSpecial (xlPasteValues)   'Achieved Premium
+        'Technical Premium
+        .Range("AL2:AL" & lrR).SpecialCells(xlCellTypeVisible).Copy:     Data.Range("M" & nrD).PasteSpecial (xlPasteValues) 'Underwriter
+        .Range("V2:V" & lrR).SpecialCells(xlCellTypeVisible).Copy:     Data.Range("N" & nrD).PasteSpecial (xlPasteValues)   'Auto_Manual
+        .Range("AV2:AV" & lrR).SpecialCells(xlCellTypeVisible).Copy:     Data.Range("O" & nrD).PasteSpecial (xlPasteValues) 'Status
+        'Renewal Month
+        'Source
+        .Range("AX2:AX" & lrR).SpecialCells(xlCellTypeVisible).Copy:     Data.Range("T" & nrD).PasteSpecial (xlPasteValues) 'AP/TP - to be removed later
+        .Protect ("dream_team")
+    End With
+    Apts.Close (False)
+Next dloc
+ 
+'Fill in missing data
+With Data
+frD = .Cells(.Rows.Count, 1).End(xlUp).Row
+ 
+'Portfolio
+.Range("B" & nrD).Value = "Block of Flats"
+If nrD <> frD Then .Range("B" & nrD & ":B" & frD).FillDown
+ 
+'Homogenise Auto_Manual
+.Range("N1:N" & frD).Replace What:="Auto Release", Replacement:="Auto-Release", LookAt:=xlWhole
+.Range("N1:N" & frD).Replace What:="Review", Replacement:="Manual", LookAt:=xlWhole
+ 
+'Homogenise Statuses
+.Range("O1:O" & frD).Replace What:="Work In Progress", Replacement:="WIP", LookAt:=xlWhole
+.Range("O1:O" & frD).Replace What:="Terms Offered", Replacement:="WIP", LookAt:=xlWhole
+.Range("O1:O" & frD).Replace What:="On Extension", Replacement:="WIP", LookAt:=xlWhole
+.Range("O1:O" & frD).Replace What:=0, Replacement:="WIP", LookAt:=xlWhole
+ 
+'Calculate Technical Premium
+.Range("L" & nrD).Formula = "=K" & nrD & "/T" & nrD
+.Range("L" & nrD & ":L" & frD).FillDown
+.Range("L" & nrD & ":L" & frD).Copy: .Range("L" & nrD & ":L" & frD).PasteSpecial (xlPasteValues)
+.Range("T" & nrD & ":T" & frD).ClearContents 'Remove AP/TP
+ 
+'Fill in ERNE blanks
+For r = nrD To frD
+    On Error Resume Next
+    If Len(Trim(.Range("J" & r).Value)) = 0 Then .Range("J" & r).Value = .Range("I" & r).Value
+    On Error GoTo 0
+Next r
+ 
+'Remove blank lines
+.Range("A1").CurrentRegion.AutoFilter Field:=1, Criteria1:=""
+lrD = .Cells(.Rows.Count, 1).End(xlUp).Row
+If lrD <> 1 Then .Range("A2:A" & lrD).SpecialCells(xlCellTypeVisible).EntireRow.Delete
+.AutoFilterMode = False
+ 
+'Fill in missing formula
+.Range("P" & nrD).Value = Left(mth, 3) & " " & yr                                       'Renewal Month
+.Range("Q" & nrD).Value = "Apartments"                                                  'Source
+.Range("R" & nrD).Formula = "=IFERROR((J" & nrD & "-I" & nrD & ")/I" & nrD & ",0)"      'Exposure
+.Range("S" & nrD).Formula = "=IFERROR((K" & nrD & "-J" & nrD & ")/J" & nrD & ",0)"      'Rate
+If nrD <> frD Then .Range("P" & nrD & ":S" & frD).FillDown
+ 
+End With
+ 
+Application.ScreenUpdating = True
+Application.DisplayAlerts = True
+ 
+GoTo Line2
+ 
+End Sub
