@@ -1,0 +1,265 @@
+Accepted Premium =
+VAR _DynamicsPremium =
+   CALCULATE (
+       SUM ( Dynamics_opportunities[RSA_Quoted_Premium] ),
+       KEEPFILTERS (
+           Dynamics_opportunities[Stage]
+               IN { "Accepted" }
+       ),
+       KEEPFILTERS (
+           Dynamics_opportunities[PL_ROI] <> "SME On Line"
+       )
+   )
+ 
+VAR _BenchmarkPremium =
+   CALCULATE (
+       SUM ( 'Benchmark NB'[Premium exc IPT] ),
+       KEEPFILTERS (
+           'Benchmark NB'[Stage]
+               IN { "Accepted" }
+       )
+   )
+ 
+RETURN
+   _DynamicsPremium + _BenchmarkPremium
+
+Accepted Premium PY =
+VAR YearsSel =
+   VALUES ( 'LK Year'[Year] )
+ 
+VAR YearsPY =
+   ADDCOLUMNS (
+       YearsSel,
+       "PY", [Year] - 1
+   )
+ 
+RETURN
+   CALCULATE ([Accepted Premium],
+ 
+       -- Remove existing year/month filters
+       REMOVEFILTERS ( 'LK Year' ),
+       
+ 
+       -- Apply PY filter correctly
+       TREATAS ( SELECTCOLUMNS ( YearsPY, "Year", [PY] ), 'LK Year'[Year] )
+ 
+       
+   )
+ 
+
+
+Accepted Premium Growth = IFERROR(([Accepted Premium] - [Accepted Premium PY]) / [Accepted Premium PY], "-")
+Quote Rate = [Total Quotes]/[Total Submissions]
+Quote Rate PY = [Total Quotes PY]/[Total Submissions PY]
+ 
+Quoted Premium =
+VAR _DynamicsPremium =
+   CALCULATE (
+       SUM ( Dynamics_opportunities[RSA_Quoted_Premium] ),
+       KEEPFILTERS (
+           Dynamics_opportunities[Stage]
+               IN { "Quoted", "Accepted", "Not Taken Up" }
+       ),
+       KEEPFILTERS (
+           Dynamics_opportunities[PL_ROI] <> "SME On Line"
+       )
+   )
+ 
+VAR _BenchmarkPremium =
+   CALCULATE (
+       SUM ( 'Benchmark NB'[Premium exc IPT] ),
+       KEEPFILTERS (
+           'Benchmark NB'[Stage]
+               IN { "Quoted", "Accepted", "Not Taken Up" }
+       )
+   )
+ 
+RETURN
+   _DynamicsPremium + _BenchmarkPremium
+Quoted Premium Growth = IFERROR(([Quoted Premium] - [Quoted Premium PY]) / [Quoted Premium PY], "-")
+Quoted Premium PY =
+VAR YearsSel =
+   VALUES ( 'LK Year'[Year] )
+ 
+VAR YearsPY =
+   ADDCOLUMNS (
+       YearsSel,
+       "PY", [Year] - 1
+   )
+ 
+RETURN
+   CALCULATE ([Quoted Premium],
+ 
+       -- Remove existing year/month filters
+       REMOVEFILTERS ( 'LK Year' ),
+       
+ 
+       -- Apply PY filter correctly
+       TREATAS ( SELECTCOLUMNS ( YearsPY, "Year", [PY] ), 'LK Year'[Year] )
+ 
+       
+   )
+ 
+Quotes Growth = IFERROR(([Total Quotes] - [Total Quotes PY]) / [Total Quotes PY], "-")
+Strike Rate = [Total Strikes]/[Total Quotes]
+Strike Rate PY = [Total Strikes PY]/[Total Quotes PY]
+Strikes Growth = IFERROR(([Total Strikes] - [Total Strikes PY]) / [Total Strikes PY], "-")
+Subs Growth = IFERROR(([Total Submissions] - [Total Submissions PY]) / [Total Submissions PY], "-")
+Total Quotes =
+VAR _DynamicsCount =
+   CALCULATE (
+       COUNTROWS ( Dynamics_opportunities ),
+       KEEPFILTERS (
+           Dynamics_opportunities[Stage]
+               IN { "Quoted", "Accepted", "Not Taken Up" }
+       ),
+       KEEPFILTERS (
+           Dynamics_opportunities[PL_ROI] <> "SME On Line"
+       )
+   )
+ 
+VAR _BenchmarkCount =
+   CALCULATE (
+       COUNTROWS ( 'Benchmark NB' ),
+       KEEPFILTERS (
+           'Benchmark NB'[Stage]
+               IN { "Quoted", "Accepted", "Not Taken Up" }
+       )
+   )
+ 
+RETURN
+   _DynamicsCount + _BenchmarkCount
+Total Quotes PY =
+VAR YearsSel =
+   VALUES ( 'LK Year'[Year] )
+ 
+VAR YearsPY =
+   ADDCOLUMNS (
+       YearsSel,
+       "PY", [Year] - 1
+   )
+ 
+RETURN
+   CALCULATE ([Total Quotes],
+ 
+       -- Remove existing year/month filters
+       REMOVEFILTERS ( 'LK Year' ),
+       
+ 
+       -- Apply PY filter correctly
+       TREATAS ( SELECTCOLUMNS ( YearsPY, "Year", [PY] ), 'LK Year'[Year] )
+ 
+       
+ 
+   
+   )
+ 
+Total Strikes =
+VAR _DynamicsCount =
+   CALCULATE (
+       COUNTROWS ( Dynamics_opportunities ),
+       KEEPFILTERS (
+           Dynamics_opportunities[Stage]
+               IN { "Accepted" }
+       ),
+       KEEPFILTERS (
+           Dynamics_opportunities[PL_ROI] <> "SME On Line"
+       )
+   )
+ 
+VAR _BenchmarkCount =
+   CALCULATE (
+       COUNTROWS ( 'Benchmark NB' ),
+       KEEPFILTERS (
+           'Benchmark NB'[Stage]
+               IN { "Accepted" }
+       )
+   )
+ 
+RETURN
+   _DynamicsCount + _BenchmarkCount
+Total Strikes PY =
+VAR YearsSel =
+   VALUES ( 'LK Year'[Year] )
+ 
+VAR YearsPY =
+   ADDCOLUMNS (
+       YearsSel,
+       "PY", [Year] - 1
+   )
+ 
+RETURN
+   CALCULATE ([Total Strikes],
+ 
+       -- Remove existing year/month filters
+       REMOVEFILTERS ( 'LK Year' ),
+       
+ 
+       -- Apply PY filter correctly
+       TREATAS ( SELECTCOLUMNS ( YearsPY, "Year", [PY] ), 'LK Year'[Year] )
+ 
+       
+   )
+ 
+Total Submissions =
+VAR _DynamicsSub =
+   CALCULATE (
+       COUNTROWS ( Dynamics_opportunities ),
+       KEEPFILTERS (
+                 Dynamics_opportunities[Stage] <> ("In View")
+               ),
+       KEEPFILTERS (
+                 Dynamics_opportunities[Stage] <> ("In Play")
+               ),    
+       KEEPFILTERS (
+           Dynamics_opportunities[PL_ROI] <> "SME On Line"
+       )
+   )
+ 
+VAR _BenchmarkSubmissions =
+  
+       CALCULATE(COUNTROWS ( 'Benchmark NB' ),KEEPFILTERS (
+           'Benchmark NB'[Valid Submission]
+               IN { "Y" })
+       )
+ 
+RETURN
+   _DynamicsSub +  _BenchmarkSubmissions
+ 
+Total Submissions PY =
+VAR YearsSel =
+   VALUES ( 'LK Year'[Year] )
+ 
+VAR YearsPY =
+   ADDCOLUMNS (
+       YearsSel,
+       "PY", [Year] - 1
+   )
+ 
+RETURN
+   CALCULATE (
+       COUNTROWS ( Dynamics_opportunities )
+           + COUNTROWS ( 'Benchmark NB' ),
+ 
+       -- Remove existing year/month filters
+       REMOVEFILTERS ( 'LK Year' ),
+       
+ 
+       -- Apply PY filter correctly
+       TREATAS ( SELECTCOLUMNS ( YearsPY, "Year", [PY] ), 'LK Year'[Year] ),
+ 
+       
+ 
+       -- Additional Dynamics filters
+       KEEPFILTERS (
+           NOT ( Dynamics_opportunities[Stage] IN { "In View", "In Play" } )
+       ),
+       KEEPFILTERS (
+           Dynamics_opportunities[PL_ROI] <> "SME On Line"
+       )
+   )
+ 
+ 
+ 
+ 
+ 
