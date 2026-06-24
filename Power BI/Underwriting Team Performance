@@ -259,6 +259,17 @@ RETURN
        )
    )
  
+Valid Submission =
+IF(
+    'Benchmark NB'[Product_QuoteID]
+        IN VALUES('Invalid TPR & BPR Quotes'[Product_QuoteID]),
+    "N",
+    "Y"
+)
+ BM_Portfolio_Ops = if(CONTAINSSTRING('Benchmark NB'[PRODUCT], "Retail"), "Shops Online", if(CONTAINSSTRING('Benchmark NB'[PRODUCT], "Office"), "Offices Online", IF(CONTAINSSTRING('Benchmark NB'[PRODUCT], "Owner"), "Property Owners Online", "[Invalid]")))
+
+
+Portfolio_Ops = if('Dynamics_opportunities'[PL_ROI]="Apartments", "Apartments", if('Dynamics_opportunities'[PL_ROI]="Engineering", "C&E", if('Dynamics_opportunities'[PL_ROI]="CAR", "C&E", if('Dynamics_opportunities'[PL_ROI]="Liability (Dublin)", "Liability (Macro)", if('Dynamics_opportunities'[PL_ROI]="Liability (Galway)", "Liability (Galway)", if('Dynamics_opportunities'[PL_ROI]="Liability (Dublin/Galway)", "Liability (Galway)", if('Dynamics_opportunities'[PL_ROI]="Marine", "Marine", if('Dynamics_opportunities'[PL_ROI]="Motor Fleet", "Fleet", if('Dynamics_opportunities'[PL_ROI]="Property", "Property", if('Dynamics_opportunities'[Product_ROI]="SBC", "Combined", if('Dynamics_opportunities'[Product_ROI]="Property Owners", "Property Owners Offline", if('Dynamics_opportunities'[Product_ROI]="Office", "Offices Offline", if('Dynamics_opportunities'[Product_ROI]="Shop", "Shops Offline", "")))))))))))))
  
  
  
